@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="art.caixi.mapper.UsersMapper">
+    <sql id="allColumns">
+        id , username , birthday , sex , address
+    </sql>
+<!--    // 查询所有用户信息-->
+<!--    List<Users> getAll();-->
+    <select id="getAll" resultType="users">
+        select <include refid="allColumns"></include>
+        from users
+    </select>
+
+<!--    用户主键查用户-->
+<!--    Users getById(Integer id);-->
+    <select id="getById" parameterType="int" resultType="users">
+        select <include refid="allColumn"></include>
+        from users
+    </select>
+
+
+<!--    根据用户名模糊查询用户-->
+<!--    users getByName(String name)-->
+<!--    <select id="getByName" parameterType="string" resultType="users">-->
+<!--        select id , userName , birthday , sex , address-->
+<!--        from users where userName like '%${userName}%'-->
+<!--    </select>-->
+
+    <select id="getByName" parameterType="string" resultType="users">
+        select <include refid="allColumn"></include>
+        from users
+        where username like contact('%' , #{username} , '%')
+    </select>
+
+<!--    更新用户-->
+<!--    void update(Users);-->
+    <update id="update" parameterType="users" >
+        update users set userName = #{userName} , birthday = #{birthday} ,
+                        sex = #{sex} , address = #{address}
+        where id = ${id}
+    </update>
+
+<!--    增加用户-->
+<!--    void insert(Users);-->
+    <insert id="insert" parameterType="users" >
+        insert into users (userName , birthday , sex , address) values(#{userName} ,#{birthday} , #{sex} , #{address})
+    </insert>
+
+<!--    根据主键删除用户-->
+<!--    void delete(Integer);-->
+    <delete id="delete" parameterType="int" >
+        delete from users where id = #{id}
+    </delete>
+
+</mapper>

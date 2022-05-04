@@ -8,15 +8,16 @@
 <!--    // 查询所有用户信息-->
 <!--    List<Users> getAll();-->
     <select id="getAll" resultType="users">
-        select <include refid="allColumns"></include>
+        select id , username , birthday , sex , address
         from users
     </select>
 
 <!--    用户主键查用户-->
 <!--    Users getById(Integer id);-->
     <select id="getById" parameterType="int" resultType="users">
-        select <include refid="allColumn"></include>
+        select  id , username , birthday , sex , address
         from users
+        where id = #{id}
     </select>
 
 
@@ -28,9 +29,9 @@
 <!--    </select>-->
 
     <select id="getByName" parameterType="string" resultType="users">
-        select <include refid="allColumn"></include>
+        select id , username , birthday , sex , address
         from users
-        where username like contact('%' , #{username} , '%')
+        where username like concat('%' , #{username} , '%')
     </select>
 
 <!--    更新用户-->
@@ -53,4 +54,69 @@
         delete from users where id = #{id}
     </delete>
 
+    <update id="updateBySet" parameterType="users">
+        update users
+        <set>
+            <if test="userName != null and userName != ''">
+                username = #{userName},
+            </if>
+            <if test="birthday != null and birthday != ''">
+                birthday = #{birthday},
+            </if>
+            <if test="sex != null and sex != ''">
+                sex = #{sex},
+            </if>
+            <if test="address != null and address != ''">
+                address =  #{address},
+            </if>
+        </set>
+            where id = #{id}
+    </update>
+<!--    List<Users> getByIds(Integer[] ids);-->
+    <select id="getByIds" resultType="users">
+        select id , username , sex , address
+        from  users
+        where id in
+            <foreach collection="array" item="id" separator="," open="(" close=")">
+                #{id}
+            </foreach>
+
+    </select>
+    <delete id="deleteByIds">
+        delete from users
+        where id in
+            <foreach collection="array" item="id" open="(" close=")" separator=",">
+                #{id}
+            </foreach>
+    </delete>
+
+<!--    int insertAll(Users[] users);-->
+    <insert id="insertAll" >
+        insert into users(username,sex ,address)
+        values
+            <foreach collection="list" item="u" separator=",">
+                (#{u.userName},#{u.sex} ,#{u.address})
+            </foreach>
+    </insert>
+    <select id="getByBirthday" resultType="users">
+        select id , username , birthday , sex , address
+        from users
+        where birthday between #{arg0} and #{arg1}
+    </select>
+    <select id="getByMap" resultType="users">
+        select id , username , birthday , sex , address
+        from users
+        where birthday between #{birthdayBegin} and #{birthdayEnd}
+    </select>
+<!--    Map getMap(Integer id);-->
+    <select id="getMap" parameterType="int" resultType="map">
+        select username name , sex , address  addr ,birthday bir
+        from users
+        where id = #{id}
+    </select>
+<!--    List<Map> getMultiMap();-->
+    <select id="getMultiMap" resultType="map" >
+        select id , username name , address addr , sex , birthday bir
+        from users
+    </select>
 </mapper>
